@@ -3,8 +3,8 @@ import { parseSetup } from "./parser/setup";
 
 export function vitePluginVueact() {
   return {
-    name: "transformTSX",
-    transform(code: string, id: string) {
+    name: "vite:vueact-tsx",
+    transform(code, id) {
       // 1.识别tsx文件
       if (!id.endsWith('.tsx')) {
         return code
@@ -19,10 +19,6 @@ export function vitePluginVueact() {
       const setup = parseSetup(code, props ? props.after : undefined);
       if (!setup) return code
 
-
-      if (props) {
-        console.log(code.replace(setup.before, setup.after))
-      }
 
       return code.replace(setup.before, setup.after)
     }

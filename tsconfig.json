@@ -1,8 +1,16 @@
 {
   "include": [
-    "src"
+    "src",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "vite"
   ],
   "compilerOptions": {
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "outDir": "dist",
     "target": "ES2020",
     "module": "ES2020",
@@ -11,6 +19,8 @@
     "declaration": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "jsx": "preserve",
   }
 }

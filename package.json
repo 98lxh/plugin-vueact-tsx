@@ -7,16 +7,28 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/98lxh/vite-plugin-vueact.git"
   },
   "scripts": {
-    "build": "unbuild"
+    "build": "unbuild",
+    "dev": "vite ./examples"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^3.4.21"
+  },
   "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@kirklin/eslint-config": "^2.2.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue-jsx": "3.1.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-format": "^0.1.0",
     "typescript": "^5.4.5",
-    "unbuild": "2.0.0"
+    "unbuild": "2.0.0",
+    "unplugin-auto-import": "^0.17.5",
+    "vite": "^5.1.6"
   }
 }
