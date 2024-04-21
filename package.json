@@ -1,0 +1,22 @@
+{
+  "name": "vite-plugin-vueact",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist",
+  "module": "./dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "build": "unbuild"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "unbuild": "2.0.0"
+  }
+}
