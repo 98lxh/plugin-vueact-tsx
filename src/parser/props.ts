@@ -24,12 +24,12 @@ function removeQuotesFromTypeProperties(str) {
     return match.replace(/"/g, '');
   });
 }
-export function parseProps(content: string) {
-  const matched = content.match(/type DefineProps = \{([\s\S]*?)\};/);
+export function parseProps(code: string) {
+  const matched = code.match(/(?:type|interface)\s+([a-zA-Z][\w]*)\s*(?:=)?\s*{([^}]*)}/s);
   if (!matched) return null;
 
   // 提取属性定义并处理每一行
-  const lines = matched[1].trim().split(/\s*;\s*/);
+  const lines = matched[2].trim().split(/\s*;\s*/);
   const vueProps = {};
 
   for (const line of lines) {
@@ -71,7 +71,7 @@ export function parseProps(content: string) {
   }
 
   return {
-    before: matched[0],
-    after: removeQuotesFromTypeProperties(JSON.stringify(vueProps))
+    unresolved: matched[0],
+    resolved: removeQuotesFromTypeProperties(JSON.stringify(vueProps))
   }
 }
