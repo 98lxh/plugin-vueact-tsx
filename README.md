@@ -2,22 +2,22 @@
 
 ## Install
 
-使用 `pnpm` 安装
+`pnpm`
 
 ```shell
 pnpm add --save-dev vite-plugin-veact
 ```
 
-使用 `npm` 安装
+`npm`
 
 ```shell
 npm install --save-dev vite-plugin-veact
 ```
 
-使用 `yarn` 安装
+ `yarn`
 
 ```shell
-yarn add --save-dev fighting-design
+yarn add --save-dev vite-plugin-veact
 ```
 
 ## Using in vite
