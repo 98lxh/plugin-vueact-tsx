@@ -19,3 +19,6 @@ export function vitePluginVueact() {
     }
   }
 }
+
+
+export * from "./types"

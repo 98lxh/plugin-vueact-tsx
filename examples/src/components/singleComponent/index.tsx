@@ -1,20 +1,18 @@
-import { VNode } from "vue";
+import { FC } from "./../../../../src/index"
 
 interface DefineProps {
   num: number;
   messsage: string;
-  children?: VNode | string;
+  children?: string;
 }
- 
-function SingleComponent(props: DefineProps) {
+
+const SingleComponent: FC<DefineProps> = function (props) {
   return (
     <div>
       <p>{props.messsage}</p>
-      <p>{props.children}</p>
       <p>{props.num}</p>
     </div>
-  )
+  );
 }
-
 
 export default SingleComponent;

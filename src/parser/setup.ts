@@ -19,6 +19,7 @@ export function parseSetupBody(src: string) {
 
 export function parseSetup(code: string, props?: string) {
   const regex = /(function\s+([^\(\s]+)\s*\(([^)]*)\)\s*{([\s\S]*)})|(\(\s*([^)]*)\s*\)\s*=>\s*{([\s\S]*)})\s*$/g;
+
   let matched: null | any = null;
   let lastIndex = -1;
 
@@ -29,17 +30,19 @@ export function parseSetup(code: string, props?: string) {
   regex.lastIndex = 0;
   matched = regex.exec(code);
 
-
-  if (!matched) return null;
   let body: string | null = null;
   let name: string | null = null;
 
   if (matched) {
-    // 函数名
     name = matched[2] || matched[6];
-    // 函数体
-    body = `${matched[2] ? `(${matched[3]})` : `(${matched[5]})`} {${matched[4] || matched[7]}}`; // 构建函数签名和函数体
+    body = `${matched[2] ? `(${matched[3]})` : `(${matched[5]})`} {${matched[4] || matched[7]}}`;
+  } else {
+    matched = code.match(/(const)\s+(\w+):\s+FC<\w+>\s+=\s+function\s+\(([\w\,\s\{\}]+)\)\s+\{([\s\S]*)\}/)
+    if(!matched) return null;
+    name = matched[2];
+    body = `(${matched[3]}){${matched[4]}}`;
   }
+
 
   return {
     unresolved: matched[0],
