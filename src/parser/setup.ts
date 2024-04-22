@@ -42,8 +42,8 @@ export function parseSetup(code: string, props?: string) {
   }
 
   return {
-    before: matched[0],
-    after: `const ${name} = defineComponent({
+    unresolved: matched[0],
+    resolved: `const ${name} = defineComponent({
       name:"${name}",
       ${props ? `props:${props},` : ""}
       setup${parseSetupBody(body!)}

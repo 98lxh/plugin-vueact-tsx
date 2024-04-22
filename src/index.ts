@@ -5,22 +5,17 @@ export function vitePluginVueact() {
   return {
     name: "vite:vueact-tsx",
     transform(code, id) {
-      // 1.识别tsx文件
       if (!id.endsWith('.tsx')) {
         return code
       }
 
-      // 2. 解析props
       const props = parseProps(code);
-      if (props) code = code.replace(props.before, '')
-
-
-      // 3. 解析setup
-      const setup = parseSetup(code, props ? props.after : undefined);
+      if (props) code = code.replace(props.unresolved, '')
+        
+      const setup = parseSetup(code, props && props.resolved);
       if (!setup) return code
 
-
-      return code.replace(setup.before, setup.after)
+      return code.replace(setup.unresolved, setup.resolved)
     }
   }
 }
