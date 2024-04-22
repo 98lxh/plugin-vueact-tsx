@@ -1,6 +1,6 @@
 import { VNode } from "vue";
 
-type DefineProps = {
+interface DefineProps {
   num: number;
   messsage: string;
   children?: VNode | string;

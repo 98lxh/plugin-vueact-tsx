@@ -1,23 +1,23 @@
-# vite-plugin-veact
+# vite-plugin-vueact
 
 ## Install
 
 `pnpm`
 
 ```shell
-pnpm add --save-dev vite-plugin-veact
+pnpm add --save-dev vite-plugin-vueact
 ```
 
 `npm`
 
 ```shell
-npm install --save-dev vite-plugin-veact
+npm install --save-dev vite-plugin-vueact
 ```
 
  `yarn`
 
 ```shell
-yarn add --save-dev vite-plugin-veact
+yarn add --save-dev vite-plugin-vueact
 ```
 
 ## Using in vite
@@ -26,10 +26,9 @@ yarn add --save-dev vite-plugin-veact
 import { defineConfig } from "vite";
 
 import vue from "@vitejs/plugin-vue";
+import { vitePluginVueact } from "vite-plugin-vueact";
 import AutoImport from "unplugin-auto-import/vite";
-import { vitePluginVueact } from "vite-plugin-veact";
 import VueJsx from "@vitejs/plugin-vue-jsx";
-import { resolve } from "path";
 
 export default defineConfig({
   plugins: [

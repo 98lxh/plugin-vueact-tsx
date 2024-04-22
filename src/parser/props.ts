@@ -25,7 +25,7 @@ function removeQuotesFromTypeProperties(str) {
   });
 }
 export function parseProps(code: string) {
-  const matched = code.match(/(?:type|interface)\s+([a-zA-Z][\w]*)\s*=\s*{([^}]*)}/s);
+  const matched = code.match(/(?:type|interface)\s+([a-zA-Z][\w]*)\s*(?:=)?\s*{([^}]*)}/s);
   if (!matched) return null;
 
   // 提取属性定义并处理每一行
