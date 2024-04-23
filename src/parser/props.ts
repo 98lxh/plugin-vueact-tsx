@@ -10,7 +10,8 @@ export async function parseProps(code: string, id: string, resolve: any) {
 
 
   async function recursionExtendsProps(propsDeclaration: RegExpMatchArray) {
-    const _extends = propsDeclaration[1]
+    const _extends = propsDeclaration[1] || ""
+
     for (const _extend of _extends.split(',')) {
       const _id = (propsDeclaration as IRegExpMatchArray).cid ? (propsDeclaration as IRegExpMatchArray).cid! : id;
       const _code = propsDeclaration['input'] || "";
