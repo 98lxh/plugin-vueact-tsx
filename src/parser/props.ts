@@ -2,6 +2,34 @@ import { genImportPropsRegex, genLocalPropsRegex, IRegExpMatchArray } from "../u
 import { isFunction, isArray, isBasic } from "../utils/is";
 import { readFileSync } from "fs";
 
+
+export async function parseProps(code: string, id: string, resolve: any) {
+  const propsDeclaration = await matchPropsDeclaration(code, id, resolve)
+  if (!propsDeclaration) return null;
+  let [source, _, sourceContent] = propsDeclaration;
+
+
+  async function recursionExtendsProps(propsDeclaration: RegExpMatchArray) {
+    const _extends = propsDeclaration[1]
+    for (const _extend of _extends.split(',')) {
+      const _id = (propsDeclaration as IRegExpMatchArray).cid ? (propsDeclaration as IRegExpMatchArray).cid! : id;
+      const _code = propsDeclaration['input'] || "";
+
+      const extendsPropsDeclaration = await matchPropsDeclaration(_code, _id, resolve, _extend)
+      if (!extendsPropsDeclaration) continue;
+      if (extendsPropsDeclaration[1]) await recursionExtendsProps(extendsPropsDeclaration);
+      sourceContent += extendsPropsDeclaration[2]
+    }
+  }
+
+  await recursionExtendsProps(propsDeclaration)
+
+  return {
+    unresolved: source,
+    resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(sourceContent)))
+  }
+}
+
 function ts2vue3Props(body: string | null) {
   if (!body) return null;
   // 提取属性定义并处理每一行
@@ -52,7 +80,7 @@ function removeQuotesFromTypeProperties(str) {
 
 async function matchPropsDeclaration(code: string, id: string, resolve: any, propName = 'DefineProps') {
   let propsDeclaration: RegExpMatchArray | null = null;
-  let cid:null | string  = null;
+  let cid: null | string = null;
 
   const importPropsRegex = genImportPropsRegex(propName);
   const localPropsRegex = genLocalPropsRegex(propName);
@@ -69,36 +97,5 @@ async function matchPropsDeclaration(code: string, id: string, resolve: any, pro
 
   (propsDeclaration as IRegExpMatchArray).cid = cid;
   return propsDeclaration;
-}
-
-export async function parseProps(code: string, id: string, resolve: any) {
-  const propsDeclaration = await matchPropsDeclaration(code, id, resolve)
-  if (!propsDeclaration) return null;
-  let [source,_, sourceContent] = propsDeclaration;
-
-  async function recursionExtendsProps (propsDeclaration: RegExpMatchArray) {
-    const _extends = propsDeclaration[1]
-    
-    
-    for(const _extend of _extends.split(',')){
-
-      const _id = (propsDeclaration as IRegExpMatchArray).cid ? (propsDeclaration as IRegExpMatchArray).cid! : id;
-      const _code = propsDeclaration['input'] || "";
-
-      const extendsPropsDeclaration = await matchPropsDeclaration(_code, _id, resolve,  _extend)
-
-      if(!extendsPropsDeclaration) continue;
-      if(extendsPropsDeclaration[1]) await recursionExtendsProps(extendsPropsDeclaration);
-      sourceContent += extendsPropsDeclaration[2]
-    } 
-  }
-
-  
-  await recursionExtendsProps(propsDeclaration)
-
-  return {
-    unresolved: source,
-    resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(sourceContent)))
-  }
 }
 
