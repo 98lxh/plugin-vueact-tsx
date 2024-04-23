@@ -8,7 +8,12 @@ export function isArray(type: string) {
 }
 
 // 是否为函数
-export function isFunction(str) {
+export function isFunction(str: string) {
   const functionPattern = /^(async\s+)?\bfunction\b|\bfunction\b|\(\s*\)\s*=>|\(\s*.*\s*\)\s*=>|\b\w+\s*=>/;
   return functionPattern.test(str.trim());
+}
+
+
+export function isInterface(str: string) {
+  return str.indexOf('interface') !== -1;
 }

@@ -6,7 +6,10 @@ function App() {
     <div>
       <SingleComponent
           messsage="11"
-          num={1}
+          num={1000}
+          msg1="1"
+          msg2="2"
+          msg3="3"
       >
         111
       </SingleComponent>

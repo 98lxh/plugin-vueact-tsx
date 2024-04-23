@@ -1,9 +1,9 @@
-import { importPropsRegex, localPropsRegex } from "../utils/regex";
+import { genImportPropsRegex, genLocalPropsRegex, IRegExpMatchArray } from "../utils/regex";
 import { isFunction, isArray, isBasic } from "../utils/is";
 import { readFileSync } from "fs";
 
 function ts2vue3Props(body: string | null) {
-  if(!body) return null;
+  if (!body) return null;
   // 提取属性定义并处理每一行
   const lines = body.trim().split(/\s*;\s*/);
   const vueProps = {};
@@ -16,12 +16,13 @@ function ts2vue3Props(body: string | null) {
 
     const propTypes: string[] = [];
     for (propType of propType.split(/\s*\|\s*/)) {
-      // 处理数组array
+      // 处理数组
       if (isArray(propType) && !propTypes.includes('Array')) {
         propTypes.push("Array")
         continue;
       }
 
+      // 处理函数
       if (isFunction(propType) && !propTypes.includes('Function')) {
         propTypes.push("Function")
         continue;
@@ -36,39 +37,68 @@ function ts2vue3Props(body: string | null) {
       propTypes.push('Object')
     }
 
-    vueProps[propName] = {  type: propTypes.length === 1 ? propTypes[0] : propTypes };
-    if (!isOptional)  vueProps[propName].required = true;
+    vueProps[propName] = { type: propTypes.length === 1 ? propTypes[0] : propTypes };
+    if (!isOptional) vueProps[propName].required = true;
   }
 
   return vueProps;
 }
 
+function removeQuotesFromTypeProperties(str) {
+  return str.replace(/"type":(\s*"\w+"|\s*\[\s*"\w+"\s*(,\s*"\w+"\s*)*])/g, function (match) {
+    return match.replace(/"/g, '');
+  });
+}
 
-  const getImportProps = (code: string) => code.match(importPropsRegex);
-  const getPropsDeclaration = (code: string) => code.match(localPropsRegex);
+async function matchPropsDeclaration(code: string, id: string, resolve: any, propName = 'DefineProps') {
+  let propsDeclaration: RegExpMatchArray | null = null;
+  let cid:null | string  = null;
+
+  const importPropsRegex = genImportPropsRegex(propName);
+  const localPropsRegex = genLocalPropsRegex(propName);
+
+
+  propsDeclaration = code.match(localPropsRegex)
+  if (!propsDeclaration) {
+    const importMatched = code.match(importPropsRegex);
+    if (!importMatched) return null;
+    const absolute = await resolve(importMatched[1], id)
+    cid = absolute.id;
+    propsDeclaration = (await readFileSync(cid!, 'utf-8')).match(localPropsRegex)
+  }
+
+  (propsDeclaration as IRegExpMatchArray).cid = cid;
+  return propsDeclaration;
+}
+
+export async function parseProps(code: string, id: string, resolve: any) {
+  const propsDeclaration = await matchPropsDeclaration(code, id, resolve)
+  if (!propsDeclaration) return null;
+  let [source,_, sourceContent] = propsDeclaration;
+
+  async function recursionExtendsProps (propsDeclaration: RegExpMatchArray) {
+    const _extends = propsDeclaration[1]
+    
+    
+    for(const _extend of _extends.split(',')){
+
+      const _id = (propsDeclaration as IRegExpMatchArray).cid ? (propsDeclaration as IRegExpMatchArray).cid! : id;
+      const _code = propsDeclaration['input'] || "";
+
+      const extendsPropsDeclaration = await matchPropsDeclaration(_code, _id, resolve,  _extend)
+
+      if(!extendsPropsDeclaration) continue;
+      if(extendsPropsDeclaration[1]) await recursionExtendsProps(extendsPropsDeclaration);
+      sourceContent += extendsPropsDeclaration[2]
+    } 
+  }
 
   
-  function removeQuotesFromTypeProperties(str) {
-    return str.replace(/"type":(\s*"\w+"|\s*\[\s*"\w+"\s*(,\s*"\w+"\s*)*])/g, function (match) {
-      return match.replace(/"/g, '');
-    });
+  await recursionExtendsProps(propsDeclaration)
+
+  return {
+    unresolved: source,
+    resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(sourceContent)))
   }
-   
-export async function parseProps(code: string, id: string, resolve: any) {
-    let propsDeclaration: RegExpMatchArray | null = null;
-    propsDeclaration = getPropsDeclaration(code);
-
-    if(!propsDeclaration){
-      const importMatched = getImportProps(code);
-      if(!importMatched) return null;
-      const absolute = await resolve(importMatched[1], id)
-      propsDeclaration = getPropsDeclaration(await readFileSync(absolute.id, 'utf-8'))
-    }
-    if(!propsDeclaration) return null;
-
-    return {
-      unresolved: propsDeclaration[0],
-      resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(propsDeclaration[1])))
-    }
-
 }
+
