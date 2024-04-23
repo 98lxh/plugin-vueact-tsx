@@ -5,6 +5,6 @@ export default kirklin({
   formatters: {
     css: true,
     html: true,
-    "prettier"
-  },
+    markdown: "prettier",
+  }
 });

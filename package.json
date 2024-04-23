@@ -1,8 +1,8 @@
 {
   "name": "vite-plugin-vueact",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
-  "main": "dist",
+  "main": "dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "dist/index.d.ts",
   "repository": {
@@ -13,7 +13,14 @@
     "build": "unbuild",
     "dev": "vite ./examples"
   },
-  "keywords": [],
+  "files": [
+    "*.d.ts",
+    "dist"
+  ],
+  "keywords": [
+    "vite",
+    "transform"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
