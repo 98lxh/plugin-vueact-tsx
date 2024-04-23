@@ -95,3 +95,70 @@ const SingleComponent = defineComponent({
 
 export default SingleComponent;
 ```
+
+---
+
+source
+
+```tsx
+// externally imported type definitions...
+
+// ./types
+export interface DefineProps {
+  num: number;
+  messsage: string;
+  children?: string;
+}
+
+
+// SingleComponent.tsx
+import { FC } from "vite-plugin-vueact"
+import { DefineProps } from "./types";
+
+const SingleComponent: FC<DefineProps> = function (props, { slots }) {
+  const { messsage, num, children } = props;
+
+  return (
+    <div>
+      {slots.default && slots.default()}
+      <p>{messsage}</p>
+      <p>{children}</p>
+      <p>{num}</p>
+    </div>
+  );
+}
+
+export default SingleComponent;
+```
+
+---
+
+resolved
+
+```tsx
+import { FC } from "vite-plugin-vueact"
+import { DefineProps } from "./types";
+
+const SingleComponent = defineComponent({
+  name: "SingleComponent",
+  props: {
+    "num": { type: Number, "required": true },
+    "messsage": { type: String, "required": true },
+    "children": { type: String }
+  },
+  setup(props, { slots }) {
+    const { messsage, num, children } = props;
+
+    return () => (
+      <div>
+        {slots.default && slots.default()}
+        <p>{messsage}</p>
+        <p>{children}</p>
+        <p>{num}</p>
+      </div>
+    );
+  }
+})
+
+export default SingleComponent;
+```
