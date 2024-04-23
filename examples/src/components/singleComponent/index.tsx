@@ -1,16 +1,15 @@
 import { FC } from "./../../../../src/index"
+import { DefineProps } from "./types";
 
-interface DefineProps {
-  num: number;
-  messsage: string;
-  children?: string;
-}
+const SingleComponent: FC<DefineProps> = function (props, { slots }) {
+  const { messsage, num, children } = props;
 
-const SingleComponent: FC<DefineProps> = function (props) {
   return (
     <div>
-      <p>{props.messsage}</p>
-      <p>{props.num}</p>
+      {slots.default && slots.default()}
+      <p>{messsage}</p>
+      <p>{children}</p>
+      <p>{num}</p>
     </div>
   );
 }

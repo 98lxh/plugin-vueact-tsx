@@ -1,37 +1,12 @@
-// 是否为基础类型
-const isBasic = (type: string) => ['string', 'number', 'boolean'].includes(type)
+import { importPropsRegex, localPropsRegex } from "../utils/regex";
+import { isFunction, isArray, isBasic } from "../utils/is";
+import { readFileSync } from "fs";
 
-// 是否为数组
-function isArray(type: string) {
-  if (type.indexOf('[]') !== -1 || type.indexOf('Array') !== -1) return true;
-  return false
-}
-
-// 是否为函数
-function isFunction(str) {
-  const functionPattern = /^(async\s+)?\bfunction\b|\bfunction\b|\(\s*\)\s*=>|\(\s*.*\s*\)\s*=>|\b\w+\s*=>/;
-  return functionPattern.test(str.trim());
-}
-
-// 首字母大写
-function capitalizeFirstLetter(str: string) {
-  if (!str) return str;
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function removeQuotesFromTypeProperties(str) {
-  return str.replace(/"type":(\s*"\w+"|\s*\[\s*"\w+"\s*(,\s*"\w+"\s*)*])/g, function (match) {
-    return match.replace(/"/g, '');
-  });
-}
-export function parseProps(code: string) {
-  const matched = code.match(/(?:type|interface)\s+([a-zA-Z][\w]*)\s*(?:=)?\s*{([^}]*)}/s);
-  if (!matched) return null;
-
+function ts2vue3Props(body: string | null) {
+  if(!body) return null;
   // 提取属性定义并处理每一行
-  const lines = matched[2].trim().split(/\s*;\s*/);
+  const lines = body.trim().split(/\s*;\s*/);
   const vueProps = {};
-
   for (const line of lines) {
     if (!line) continue
     // 提取键、类型和可选标记
@@ -54,24 +29,46 @@ export function parseProps(code: string) {
 
       // 基础数据类型
       if (isBasic(propType)) {
-        propTypes.push(capitalizeFirstLetter(propType))
+        propTypes.push(propType.charAt(0).toUpperCase() + propType.slice(1))
         continue;
       }
 
       propTypes.push('Object')
     }
 
-    vueProps[propName] = {
-      type: propTypes.length === 1 ? propTypes[0] : propTypes
-    };
+    vueProps[propName] = {  type: propTypes.length === 1 ? propTypes[0] : propTypes };
+    if (!isOptional)  vueProps[propName].required = true;
+  }
 
-    if (!isOptional) {
-      vueProps[propName].required = true;
+  return vueProps;
+}
+
+
+  const getImportProps = (code: string) => code.match(importPropsRegex);
+  const getPropsDeclaration = (code: string) => code.match(localPropsRegex);
+
+  
+  function removeQuotesFromTypeProperties(str) {
+    return str.replace(/"type":(\s*"\w+"|\s*\[\s*"\w+"\s*(,\s*"\w+"\s*)*])/g, function (match) {
+      return match.replace(/"/g, '');
+    });
+  }
+   
+export async function parseProps(code: string, id: string, resolve: any) {
+    let propsDeclaration: RegExpMatchArray | null = null;
+    propsDeclaration = getPropsDeclaration(code);
+
+    if(!propsDeclaration){
+      const importMatched = getImportProps(code);
+      if(!importMatched) return null;
+      const absolute = await resolve(importMatched[1], id)
+      propsDeclaration = getPropsDeclaration(await readFileSync(absolute.id, 'utf-8'))
     }
-  }
+    if(!propsDeclaration) return null;
 
-  return {
-    unresolved: matched[0],
-    resolved: removeQuotesFromTypeProperties(JSON.stringify(vueProps))
-  }
+    return {
+      unresolved: propsDeclaration[0],
+      resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(propsDeclaration[1])))
+    }
+
 }
