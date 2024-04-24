@@ -1,3 +1,4 @@
+import { parseEmits } from "./parser/emits";
 import { parseProps } from "./parser/props"
 import { parseSetup } from "./parser/setup";
 
@@ -11,13 +12,18 @@ export function vitePluginVueact() {
       }
 
       let props:null | any = null;
+      let emits:null | any = null;
       let setup:null | any = null;
       
       if(props = await parseProps(code, id, async (path, id) => (this as any).resolve(path, id))){
         code = code.replace(props.unresolved, '')
       }
+
+      if(emits = await parseEmits(code, id, async (path, id) => (this as any).resolve(path, id))){
+        code = code.replace(emits.unresolved, '')
+      }
       
-      if(setup = parseSetup(code, props && props.resolved)){
+      if(setup = parseSetup(code, props && props.resolved, emits && emits.resolved)){
         code = code.replace(setup.unresolved, setup.resolved)
       }
 

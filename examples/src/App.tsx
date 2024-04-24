@@ -9,9 +9,9 @@ function App() {
           msg1="1"
           bool={false}
           msg3="3"
-      >
-        111
-      </SingleComponent>
+          onUpdate:modelValue={val => console.log(val)}
+          onUpdate:value={val => console.log(val)}
+      />
     </div>
   )
 }
