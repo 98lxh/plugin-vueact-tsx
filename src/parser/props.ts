@@ -1,12 +1,10 @@
-import { genImportPropsRegex, genLocalPropsRegex, IRegExpMatchArray } from "../utils/regex";
 import { isFunction, isArray, isBasic } from "../utils/is";
-import { readFileSync } from "fs";
 import { parser } from "./parser";
 
 
 export async function parseProps(code: string, id: string, _resolve: any) {
   const propsDeclaration = await parser(code, id, _resolve, 'DefineProps');
-  if(!propsDeclaration) return null
+  if (!propsDeclaration) return null
   return {
     ...propsDeclaration,
     resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(propsDeclaration.resolved)))
@@ -17,7 +15,7 @@ function ts2vue3Props(resolved: string | null) {
   if (!resolved) return null;
   const lines = resolved.trim().split(/\s*;\s*/);
   const vueProps = {};
-  
+
   for (const line of lines) {
     if (!line) continue
     let [propName, propType] = line.split(/\s*:\s*/);

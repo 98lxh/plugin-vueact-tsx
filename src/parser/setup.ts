@@ -38,7 +38,7 @@ export function parseSetup(code: string, props?: string, emits?: string) {
     body = `${matched[2] ? `(${matched[3]})` : `(${matched[5]})`} {${matched[4] || matched[7]}}`;
   } else {
     matched = code.match(setupGenericsRegex)
-    if(!matched) return null;
+    if (!matched) return null;
     name = matched[2];
     body = `(${matched[3]}){${matched[4]}}`;
   }

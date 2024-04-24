@@ -11,23 +11,23 @@ export function vitePluginVueact() {
         return code;
       }
 
-      let props:null | any = null;
-      let emits:null | any = null;
-      let setup:null | any = null;
-      
-      if(props = await parseProps(code, id, async (path, id) => (this as any).resolve(path, id))){
+      let props: null | any = null;
+      let emits: null | any = null;
+      let setup: null | any = null;
+
+      if (props = await parseProps(code, id, async (path, id) => (this as any).resolve(path, id))) {
         code = code.replace(props.unresolved, '')
       }
 
-      if(emits = await parseEmits(code, id, async (path, id) => (this as any).resolve(path, id))){
+      if (emits = await parseEmits(code, id, async (path, id) => (this as any).resolve(path, id))) {
         code = code.replace(emits.unresolved, '')
       }
-      
-      if(setup = parseSetup(code, props && props.resolved, emits && emits.resolved)){
+
+      if (setup = parseSetup(code, props && props.resolved, emits && emits.resolved)) {
         code = code.replace(setup.unresolved, setup.resolved)
       }
 
-      return code; 
+      return code;
     }
   }
 }

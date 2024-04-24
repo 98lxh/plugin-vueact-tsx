@@ -12,7 +12,7 @@ export async function parser(code: string, id: string, _resolve: any, propName: 
 
     async function recursionExtendsProps(propsDeclaration: RegExpMatchArray) {
       const declaration = propsDeclaration as IRegExpMatchArray;
-      
+
       const _extends = (propsDeclaration[1] || "").split(',').map(str => str.trim())
 
       for (const _extend of _extends) {
@@ -42,7 +42,7 @@ async function matchPropsDeclaration(code: string, id: string, resolve: any, pro
 
   const importPropsRegex = genImportPropsRegex(propName);
   const localPropsRegex = genLocalPropsRegex(propName);
-   propsDeclaration = code.match(localPropsRegex)
+  propsDeclaration = code.match(localPropsRegex)
 
   if (!propsDeclaration) {
     const importMatched = code.match(importPropsRegex);

@@ -13,9 +13,9 @@ export async function parseEmits(code: string, id: string, _resolve: any) {
 
 
 function ts2VueEmits(resolved: string) {
-  let emits:string[] = [];
+  let emits: string[] = [];
   let matched;
-  
+
   while ((matched = emitsRegex.exec(resolved)) !== null) {
     emits.push(matched[1]);
   }
