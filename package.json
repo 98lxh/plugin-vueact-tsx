@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-vueact",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -37,5 +37,9 @@
     "unbuild": "2.0.0",
     "unplugin-auto-import": "^0.17.5",
     "vite": "^5.1.6"
+  },
+  "peerDependencies": {
+    "vite": "^5.0.0",
+    "vue": "^3.0.0"
   }
 }

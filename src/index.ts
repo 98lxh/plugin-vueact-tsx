@@ -1,8 +1,10 @@
+import { Plugin } from "vite";
 import { parseEmits } from "./parser/emits";
 import { parseProps } from "./parser/props"
 import { parseSetup } from "./parser/setup";
+import { ParserValue } from "./types";
 
-export function vitePluginVueact() {
+export function vitePluginVueact(): Plugin {
   return {
     name: "vite:vueact-tsx",
     enforce: 'pre',
@@ -11,15 +13,15 @@ export function vitePluginVueact() {
         return code;
       }
 
-      let props: null | any = null;
-      let emits: null | any = null;
-      let setup: null | any = null;
+      let props: null | ParserValue = null;
+      let emits: null | ParserValue = null;
+      let setup: null | ParserValue = null;
 
-      if (props = await parseProps(code, id, async (path, id) => (this as any).resolve(path, id))) {
+      if (props = await parseProps(code, id, async (path, id) => this.resolve(path, id))) {
         code = code.replace(props.unresolved, '')
       }
 
-      if (emits = await parseEmits(code, id, async (path, id) => (this as any).resolve(path, id))) {
+      if (emits = await parseEmits(code, id, async (path, id) => this.resolve(path, id))) {
         code = code.replace(emits.unresolved, '')
       }
 

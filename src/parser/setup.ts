@@ -19,7 +19,7 @@ export function parseSetupBody(src: string) {
   }
 }
 
-export function parseSetup(code: string, props?: string, emits?: string) {
+export function parseSetup(code: string, props?: string | null, emits?: string | null) {
   let matched: null | any = null;
   let lastIndex = -1;
 
@@ -47,7 +47,7 @@ export function parseSetup(code: string, props?: string, emits?: string) {
     unresolved: matched[0],
     resolved: `const ${name} = defineComponent({
       name:"${name}",
-      ${emits ? `props:${emits},` : ""}
+      ${emits ? `emits:${emits},` : ""}
       ${props ? `props:${props},` : ""}
       setup${parseSetupBody(body!)}
     })`

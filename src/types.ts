@@ -11,3 +11,9 @@ type FcOptions<Emits> = {
 export interface FC<Props = any, Emits = any> {
   (props: Props & BasicProps, options: FcOptions<Emits>): any
 }
+
+
+export type ParserValue = {
+  resolved: string;
+  unresolved: string
+} | null
