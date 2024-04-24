@@ -43,7 +43,6 @@ export function parseSetup(code: string, props?: string) {
     body = `(${matched[3]}){${matched[4]}}`;
   }
 
-
   return {
     unresolved: matched[0],
     resolved: `const ${name} = defineComponent({

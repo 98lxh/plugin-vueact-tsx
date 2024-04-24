@@ -2,7 +2,7 @@ export const localPropsRegex = /(?:type|interface)\s+DefineProps(?:\s+extends\s+
 export const importPropsRegex = /import\s+\{\s*DefineProps\s*\}\s+from\s+['"](.+?)['"]/;
 
 export const setupGenericsRegex = /(const)\s+(\w+):\s+FC<\w+>\s+=\s+function\s+\(([\w\,\s\{\}]+)\)\s+\{([\s\S]*)\}/;
-export const setupRegex = /(function\s+([^\(\s]+)\s*\(([^)]*)\)\s*{([\s\S]*)})|(\(\s*([^)]*)\s*\)\s*=>\s*{([\s\S]*)})\s*$/g;
+export const setupRegex = /(function\s+([A-Z][^\(\s]+)\s*\(([^)]*)\)\s*{([\s\S]*)})|(\(\s*([^)]*)\s*\)\s*=>\s*{([\s\S]*)})\s*$/g;
 
 
 export function genLocalPropsRegex(interfaceName = 'DefineProps') {
@@ -11,7 +11,7 @@ export function genLocalPropsRegex(interfaceName = 'DefineProps') {
 }
 
 export const genImportPropsRegex = (interfaceName = 'DefineProps') => {
-  const pattern = `import\\s+\\{\\s*${interfaceName}\\s*\\}\\s+from\\s+['"](.+?)['"]`;
+  const pattern = `import\\s+\\{[\\s\\S]*${interfaceName}[\\s\\S]*\\}\\s+from\\s+['"](.+?)['"]`;
   return new RegExp(pattern, 's');
 }
 

@@ -6,12 +6,22 @@ export function vitePluginVueact() {
     name: "vite:vueact-tsx",
     enforce: 'pre',
     async transform(code, id) {
-      if (!id.endsWith('.tsx')) return code
-      const props = await parseProps(code, id, async (path, id) => (this as any).resolve(path, id));
-      if (props) code = code.replace(props.unresolved, '')
-      const setup = parseSetup(code, props && props.resolved);
-      if (!setup) return code
-      return code.replace(setup.unresolved, setup.resolved)
+      if (!id.endsWith('.tsx')) {
+        return code;
+      }
+
+      let props:null | any = null;
+      let setup:null | any = null;
+      
+      if(props = await parseProps(code, id, async (path, id) => (this as any).resolve(path, id))){
+        code = code.replace(props.unresolved, '')
+      }
+      
+      if(setup = parseSetup(code, props && props.resolved)){
+        code = code.replace(setup.unresolved, setup.resolved)
+      }
+
+      return code; 
     }
   }
 }

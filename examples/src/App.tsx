@@ -1,4 +1,3 @@
-import { onMounted, ref } from "vue";
 import SingleComponent from "~/components/singleComponent"
 
 function App() {
@@ -8,7 +7,7 @@ function App() {
           messsage="11"
           num={1000}
           msg1="1"
-          msg2="2"
+          bool={false}
           msg3="3"
       >
         111

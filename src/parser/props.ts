@@ -3,23 +3,32 @@ import { isFunction, isArray, isBasic } from "../utils/is";
 import { readFileSync } from "fs";
 
 
-export async function parseProps(code: string, id: string, resolve: any) {
-  const propsDeclaration = await matchPropsDeclaration(code, id, resolve)
-  if (!propsDeclaration) return null;
-  let [source, _, sourceContent] = propsDeclaration;
+export async function parseProps(code: string, id: string, _resolve: any) {
+  const propsDeclaration = await matchPropsDeclaration(code, id, _resolve)
 
+  if(!propsDeclaration) {
+    return null;
+  }
+
+  let content = propsDeclaration[2]
+  const source = propsDeclaration[0]
 
   async function recursionExtendsProps(propsDeclaration: RegExpMatchArray) {
+    const declaration = propsDeclaration as IRegExpMatchArray;
     const _extends = propsDeclaration[1] || ""
 
     for (const _extend of _extends.split(',')) {
-      const _id = (propsDeclaration as IRegExpMatchArray).cid ? (propsDeclaration as IRegExpMatchArray).cid! : id;
-      const _code = propsDeclaration['input'] || "";
+      const _id = declaration.cid ? declaration.cid : id;
+      const _code = declaration['input'] || "";
 
-      const extendsPropsDeclaration = await matchPropsDeclaration(_code, _id, resolve, _extend)
-      if (!extendsPropsDeclaration) continue;
-      if (extendsPropsDeclaration[1]) await recursionExtendsProps(extendsPropsDeclaration);
-      sourceContent += extendsPropsDeclaration[2]
+      const extendsPropsDeclaration = await matchPropsDeclaration(_code, _id, _resolve, _extend)
+
+      if (extendsPropsDeclaration) {
+        await recursionExtendsProps(extendsPropsDeclaration);
+        content += extendsPropsDeclaration[2]
+      }else {
+        continue;
+      }
     }
   }
 
@@ -27,7 +36,7 @@ export async function parseProps(code: string, id: string, resolve: any) {
 
   return {
     unresolved: source,
-    resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(sourceContent)))
+    resolved: removeQuotesFromTypeProperties(JSON.stringify(ts2vue3Props(content)))
   }
 }
 
@@ -88,15 +97,17 @@ async function matchPropsDeclaration(code: string, id: string, resolve: any, pro
 
 
   propsDeclaration = code.match(localPropsRegex)
+
   if (!propsDeclaration) {
     const importMatched = code.match(importPropsRegex);
     if (!importMatched) return null;
     const absolute = await resolve(importMatched[1], id)
     cid = absolute.id;
     propsDeclaration = (await readFileSync(cid!, 'utf-8')).match(localPropsRegex)
+    propsDeclaration && ((propsDeclaration as IRegExpMatchArray).cid = cid);
   }
 
-  (propsDeclaration as IRegExpMatchArray).cid = cid;
+
   return propsDeclaration;
 }
 
