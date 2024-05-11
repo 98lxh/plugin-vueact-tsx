@@ -14,22 +14,16 @@ export function parseSetupBody(src: string) {
   let lastIndex = -1
 
   for (const match of matchs) {
-    if(isExcludeReturn(match.index, src)){
-      continue
-    }
-
+    if(isExcludeReturn(match.index, src)){ continue }
     lastIndex = match.index
   }
-
   if(lastIndex === -1){
     return src
   }
-
   return splitStringWithIndex(src, lastIndex + 6).join(` ()=> `)
 }
 
 function isExcludeReturn(index: number, src: string) {
-  console.log(src.slice(index - 12, index).trim() === '/*EXCLUDE*/')
   return src.slice(index - 12, index).trim() === '/*EXCLUDE*/'
 }
 

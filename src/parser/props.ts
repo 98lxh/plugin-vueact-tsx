@@ -24,6 +24,13 @@ function ts2vue3Props(resolved: string | null) {
 
     const propTypes: string[] = [];
     for (propType of propType.split(/\s*\|\s*/)) {
+      
+      // 处理字面量类型
+      if( /['"]/.test(propType) && !propType.includes('String')){
+        propTypes.push("String")
+        continue;
+      }
+
       if (isArray(propType) && !propTypes.includes('Array')) {
         propTypes.push("Array")
         continue;
