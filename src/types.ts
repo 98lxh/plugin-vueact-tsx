@@ -4,14 +4,13 @@ type BasicProps = {
 
 type FcOptions<Emits> = {
   emit: Emits,
-  expose: {},
-  slots: {}
+  expose: any,
+  slots: any
 }
 
 export interface FC<Props = any, Emits = any> {
   (props: Props & BasicProps, options: FcOptions<Emits>): any
 }
-
 
 export type ParserValue = {
   resolved: string;
