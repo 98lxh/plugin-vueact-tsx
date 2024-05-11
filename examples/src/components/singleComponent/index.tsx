@@ -8,7 +8,7 @@ import { onMounted } from "vue";
 
 interface DefineProps extends First, Second {
   num: number;
-  messsage: string;
+  messsage: '11' | '22';
   children?: string;
 }
 
@@ -36,7 +36,12 @@ const SingleComponent: FC<DefineProps, DefineEmits> = function (props, { emit })
       <p>{msg1}</p>
       <p>{msg3}</p>
       <p>{children}</p>
-      <p>{num}</p>
+      {
+        (() => {
+          const a = 1
+          /*EXCLUDE*/ return a
+        })()
+      }
     </div>
   );
 }

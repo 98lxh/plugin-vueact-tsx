@@ -28,7 +28,7 @@ export function vitePluginVueact(): Plugin {
       if (setup = parseSetup(code, props && props.resolved, emits && emits.resolved)) {
         code = code.replace(setup.unresolved, setup.resolved)
       }
-
+      
       return code;
     }
   }
